@@ -1,8 +1,7 @@
 """Shared data contracts between the engine, the core, the app and the AI layer.
 
-FROZEN at T0. This module is the interface both developers build against; change it only
-through the contract-change protocol in ``team/00-TEAM-PLAN-OVERVIEW.md`` §7. After T0 it is
-owned by Dev 2.
+Every layer exchanges these pydantic models, so they are the stable interface of the package.
+Changing a field is a breaking change: update ``tests/fixtures`` and the contract tests with it.
 """
 
 from typing import Any, Literal, Protocol

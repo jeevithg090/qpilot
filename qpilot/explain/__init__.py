@@ -1,1 +1,1 @@
-"""Explanation templates rendered from facts only (owner: Dev 1)."""
+"""Explanation templates rendered from facts only."""

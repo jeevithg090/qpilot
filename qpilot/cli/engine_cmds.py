@@ -1,4 +1,4 @@
-"""CLI commands owned by Dev 1: fetch-demo, run, app, doctor, explain, validate."""
+"""CLI commands for the analysis engine and app (none registered yet)."""
 
 from qpilot.cli._types import Command
 
