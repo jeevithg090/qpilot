@@ -13,4 +13,9 @@ Please report vulnerabilities privately through GitHub's **"Report a vulnerabili
 We follow **coordinated disclosure**: we aim to acknowledge a report within 5 working days and to publish a fix or mitigation within 90 days, after which the reporter may disclose publicly. We will credit reporters who wish to be credited.
 
 ## Scope
-In scope: the `qpilot` Python package, its command-line interface, the local web app, and the MCP server. A one-page threat model is in `THREAT_MODEL.md` (added during the build).
+In scope: the `qpilot` Python package and its command-line interface, and (once they ship) the local web app and the MCP server.
+
+Design rules:
+- RDML input is untrusted: the loader (not implemented yet) must parse XML without resolving external entities, loading DTDs or touching the network (`tests/fixtures/xxe.rdml` is the regression fixture for this).
+- Unit tests run with network access disabled (`pytest-socket`).
+- No credentials are stored in the repository; `gitleaks` runs as a pre-commit hook.
