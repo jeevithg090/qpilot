@@ -1,4 +1,4 @@
-"""CLI commands owned by Dev 2: plan, rerun, verify, serve, harness, records, mcp."""
+"""CLI commands for the robustness core, records and integrations (none registered yet)."""
 
 from qpilot.cli._types import Command
 
