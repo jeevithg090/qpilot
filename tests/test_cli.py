@@ -61,3 +61,63 @@ def test_main_propagates_exit_code(monkeypatch, returned, expected):
 
     monkeypatch.setattr(core_cmds, "COMMANDS", [_command("demo", lambda args: returned)])
     assert main(["demo"]) == expected
+
+
+def test_help_lists_info_command_and_examples(capsys):
+    with pytest.raises(SystemExit) as excinfo:
+        main(["--help"])
+    assert excinfo.value.code == 0
+    out = capsys.readouterr().out
+    assert "info" in out
+    assert "examples:" in out
+    assert "early scaffold" in out
+
+
+def test_info_prints_version_and_extras(capsys):
+    assert main(["info"]) == 0
+    out = capsys.readouterr().out
+    assert out.startswith(f"qpilot {__version__}")
+    for extra in ("ai", "parquet", "xlsx"):
+        assert extra in out
+    assert "demo dataset" in out
+
+
+def test_info_json_is_machine_readable(capsys):
+    import json
+
+    assert main(["info", "--json"]) == 0
+    info = json.loads(capsys.readouterr().out)
+    assert info["version"] == __version__
+    assert set(info["extras"]) == {"ai", "parquet", "xlsx"}
+    assert isinstance(info["demo_dataset"]["cached"], bool)
+
+
+def test_info_extras_match_pyproject():
+    import tomllib
+    from pathlib import Path
+
+    from qpilot.cli.meta_cmds import OPTIONAL_EXTRAS
+
+    pyproject = tomllib.loads((Path(__file__).resolve().parents[1] / "pyproject.toml").read_text())
+    declared = set(pyproject["project"]["optional-dependencies"]) - {"dev"}
+    assert set(OPTIONAL_EXTRAS) == declared
+
+
+def test_info_reports_missing_extra_with_install_hint(monkeypatch):
+    from qpilot.cli import meta_cmds
+
+    monkeypatch.setattr(meta_cmds, "OPTIONAL_EXTRAS", {"xlsx": ("no_such_module_xyz",)})
+    text = meta_cmds.format_info(meta_cmds.collect_info())
+    assert 'pip install "qpilot[xlsx]"' in text
+    assert "no_such_module_xyz" in text
+
+
+def test_keyboard_interrupt_exits_130(monkeypatch, capsys):
+    from qpilot.cli import core_cmds
+
+    def run(args):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(core_cmds, "COMMANDS", [_command("demo", run)])
+    assert main(["demo"]) == 130
+    assert "interrupted" in capsys.readouterr().err
