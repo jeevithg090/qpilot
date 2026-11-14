@@ -5,7 +5,7 @@ qPilot is licensed under the Apache License 2.0 (see `LICENSE`). It vendors, dep
 ## Vendored code
 | Component | Version / commit | Licence | Where | Notes |
 |---|---|---|---|---|
-| rdmlpython (`rdml.py`, LinRegPCR implementation) | RDML-consortium/rdmlpython @ `fce7a44e8b47b90759c646b557de568f7af77e75` (2 May 2026) | MIT, Copyright (c) 2019 the RDML-consortium | `qpilot/vendor/rdmlpython/` | Copied verbatim; not modified. Cite Ruijter et al. 2009 and Untergasser et al. 2021. |
+| rdmlpython (`rdml.py`, LinRegPCR implementation) | RDML-consortium/rdmlpython @ `fce7a44e8b47b90759c646b557de568f7af77e75` (2 May 2026) | MIT, Copyright (c) 2019 the RDML-consortium | `qpilot/vendor/rdmlpython/` (planned; not yet vendored) | To be copied verbatim, unmodified. Cite Ruijter et al. 2009 and Untergasser et al. 2021. |
 
 ## Runtime dependencies (installed, not vendored)
 | Package | Licence |
@@ -32,7 +32,7 @@ qPilot is licensed under the Apache License 2.0 (see `LICENSE`). It vendors, dep
 ## Data
 | Dataset | Licence | How it is used |
 |---|---|---|
-| Vermeulen et al. 2009 / Ruijter et al. 2013 neuroblastoma qPCR benchmark (`data_vermeulen_raw.rdml`, 64 plates) | CC BY 4.0 (as redistributed by the CRAN `vermeulen` / `ruijter` packages; hosted in the MIT rdmlpython repository) | Downloaded at runtime by `qpilot fetch-demo` with a SHA-256 pin. **Never committed to this repository.** |
+| Vermeulen et al. 2009 / Ruijter et al. 2013 neuroblastoma qPCR benchmark (`data_vermeulen_raw.rdml`, 64 plates) | CC BY 4.0 (as redistributed by the CRAN `vermeulen` / `ruijter` packages; hosted in the MIT rdmlpython repository) | To be downloaded at runtime with a SHA-256 pin (planned `qpilot fetch-demo` command). **Never committed to this repository.** |
 | `tests/fixtures/test_mca_1_raw_data.rdml` | MIT (rdmlpython repository @ `fce7a44`, `test/`) | Small smoke-test fixture. |
 
 ## Not used (deliberately)
