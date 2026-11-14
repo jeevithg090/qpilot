@@ -1,7 +1,4 @@
-"""Shared pytest fixtures: the T0 contract fixtures and the cached demo dataset.
-
-Owned by Dev 1. Both developers' tests use these; do not change their names or return types.
-"""
+"""Shared pytest fixtures: the contract fixtures and the optional cached demo dataset."""
 
 import json
 from pathlib import Path
@@ -50,7 +47,7 @@ def smoke_rdml() -> Path:
 def demo_rdml_path() -> Path:
     """The cached 64-plate demo dataset; skips the test when it has not been fetched."""
     if not DEMO_RDML.exists():
-        pytest.skip("demo dataset not cached; run `qpilot fetch-demo`")
+        pytest.skip("demo dataset not cached; place data_vermeulen_raw.rdml in ~/.cache/qpilot/")
     return DEMO_RDML
 
 
@@ -67,7 +64,9 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
     """Skip ``demo_data`` tests automatically when the dataset is not cached."""
     if DEMO_RDML.exists():
         return
-    skip = pytest.mark.skip(reason="demo dataset not cached; run `qpilot fetch-demo`")
+    skip = pytest.mark.skip(
+        reason="demo dataset not cached; place data_vermeulen_raw.rdml in ~/.cache/qpilot/"
+    )
     for item in items:
         if "demo_data" in item.keywords:
             item.add_marker(skip)
