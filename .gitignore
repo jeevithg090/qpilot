@@ -26,3 +26,8 @@ sbom.json
 .DS_Store
 .idea/
 .vscode/
+
+# Environment and coverage
+.env
+.coverage
+htmlcov/
