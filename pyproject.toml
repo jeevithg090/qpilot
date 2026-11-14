@@ -17,8 +17,8 @@ classifiers = [
   "Programming Language :: Python :: 3",
   "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
-# Every dependency for both development tracks is declared here at T0 so that
-# nobody needs to edit this file during the build (see team/00-TEAM-PLAN-OVERVIEW.md).
+# Runtime dependencies of the full planned stack (engine, app, MCP server). Several are not
+# imported yet; they are declared up front so every module can be built against one environment.
 dependencies = [
   "lxml>=6.1.3",
   "numpy",
@@ -34,6 +34,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "build",
   "pytest",
   "pytest-socket",
   "ruff",
@@ -53,4 +54,20 @@ qpilot = "qpilot.cli:main"
 packages = ["qpilot"]
 
 [tool.hatch.build.targets.sdist]
-exclude = ["tests/fixtures/*.rdml", "demo/*.mp4"]
+exclude = ["tests/fixtures/*.rdml"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+exclude = ["^qpilot/vendor/"]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+module = "lxml.*"
+ignore_missing_imports = true
