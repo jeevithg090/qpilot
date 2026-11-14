@@ -4,34 +4,70 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
+    name: lint and type-check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install ruff
+          cache: pip
+      - run: pip install -e ".[dev]"
       - run: ruff format --check .
       - run: ruff check .
+      - run: mypy qpilot tests
 
   test:
+    name: test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -e ".[dev,ai]"
+      # Tests that need the downloaded demo dataset skip themselves when it is absent.
+      - run: pytest -q -m "not demo_data"
+      - run: qpilot --version
+
+  build:
+    name: build distributions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -e ".[dev,ai]"
-      # Unit tests only: tests needing the downloaded demo dataset run locally.
-      - run: pytest -q -m "not demo_data"
+      - run: pip install build
+      - run: python -m build
+      - name: Install the wheel into a clean environment and run it
+        run: |
+          python -m venv /tmp/wheel-env
+          /tmp/wheel-env/bin/pip install dist/*.whl
+          /tmp/wheel-env/bin/qpilot --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
 
   audit:
+    name: dependency audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
